@@ -2,6 +2,8 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import ScrollProgress from './components/ScrollProgress'
+import BackToTop from './components/BackToTop'
 import Home from './pages/Home'
 import About from './pages/About'
 import Founder from './pages/Founder'
@@ -15,10 +17,38 @@ function ScrollToTop() {
   return null
 }
 
+// Global scroll-trigger animation observer — re-runs after each route change
+function AnimationObserver() {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible')
+              observer.unobserve(entry.target)
+            }
+          })
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+      )
+      document.querySelectorAll('.anim:not(.visible)').forEach(el => observer.observe(el))
+      return () => observer.disconnect()
+    }, 80)
+    return () => clearTimeout(timer)
+  }, [pathname])
+
+  return null
+}
+
 export default function App() {
   return (
     <>
+      <ScrollProgress />
       <ScrollToTop />
+      <AnimationObserver />
       <Navbar />
       <main>
         <Routes>
@@ -31,6 +61,7 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
+      <BackToTop />
     </>
   )
 }
