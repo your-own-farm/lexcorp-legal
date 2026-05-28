@@ -4,16 +4,10 @@
   <meta charset="UTF-8" />
   <title>LexCorp Legal & Compliance</title>
   <script>
-    // GitHub Pages SPA routing: redirect deep links back through index.html
-    // preserving the path as a query param that index.html decodes.
-    var l = window.location;
-    l.replace(
-      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      l.pathname.split('/').slice(0, 2).join('/') +
-      '/?p=/' + l.pathname.slice(1).split('/').slice(1).join('/').replace(/&/g, '~and~') +
-      (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-      l.hash
-    );
+    // When GitHub Pages 404s on a deep link (e.g. /lexcorp-legal/about),
+    // save the intended URL and redirect to the SPA root so index.html boots.
+    sessionStorage.setItem('spa_redirect', location.href);
+    location.replace('/lexcorp-legal/');
   </script>
 </head>
 <body></body>
